@@ -1,35 +1,32 @@
-package org.example;
+package org.main;
 
 import java.sql.SQLException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import org.h2.tools.Server;
 
 public class Application {
 
     public static void main(String[] args) throws SQLException {
-        startDatabase();
 
-        final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("br.com.fredericci.pu");
+        final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("br.com.jerome.pu");
         final EntityManager entityManager = entityManagerFactory.createEntityManager();
 
-        Customer customer = new Customer();
-        customer.setFirstName("Dennys");
-        customer.setLastName("Fredericci");
+        Immeuble I = new Immeuble("3", "rue 3", "ville 3");
+        Immeuble I2 = new Immeuble("6", "rue 6", "ville 6");
 
         entityManager.getTransaction().begin();
-        entityManager.persist(customer);
+        Immeuble immo = (Immeuble) entityManager.find(Immeuble.class, I.getNoImm());
+        if (immo == null) {
+            entityManager.persist(I);
+        }
+
+        immo = (Immeuble) entityManager.find(Immeuble.class, I2.getNoImm());
+        if (immo == null) {
+            entityManager.persist(I2);
+        }
         entityManager.getTransaction().commit();
 
-        System.out.println("Open your browser and navigate to http://localhost:8082/");
-        System.out.println("JDBC URL: jdbc:h2:mem:my_database");
-        System.out.println("User Name: sa");
-        System.out.println("Password: ");
-
     }
 
-    private static void startDatabase() throws SQLException {
-        new Server().runTool("-tcp", "-web", "-ifNotExists");
-    }
 }
